@@ -1,0 +1,56 @@
+{
+  "$schema": "../../esquemas/arbrain-extension.schema.json",
+  "esquema": "arbrain.extension/v1",
+  "nombre": "Competencia",
+  "resumen": "Tu censo de los canales de YouTube de tu nicho: qué venden, a qué precio y qué modelo predomina.",
+  "frases": ["instálame la de competencia", "quiero ver a mis competidores", "la extensión de competencia", "el panel de competidores"],
+  "requiere": {
+    "arbrain": ">=0.2.0",
+    "skills_base": [],
+    "programas": ["python3", "yt-dlp"],
+    "extensiones": [],
+    "llaves": [
+      {
+        "clave": "youtube_data_api_key",
+        "para": "Leer los canales y los videos de tus competidores con tu propia cuota gratuita de YouTube (10,000 unidades al día; la extensión se frena en 2,000 si no dices otra cosa).",
+        "como_conseguirla": "console.cloud.google.com → crea un proyecto → «APIs y servicios» → habilita «YouTube Data API v3» → «Credenciales» → «Crear credenciales» → «Clave de API». Restríngela a la YouTube Data API v3.",
+        "opcional": false
+      }
+    ]
+  },
+  "permisos": {
+    "lee": [".claude/memory/extensiones/competencia/"],
+    "escribe": [".claude/memory/extensiones/competencia/"],
+    "red": ["www.googleapis.com", "www.youtube.com", "*"],
+    "lienzo": false,
+    "programa": true
+  },
+  "panel": {
+    "titulo": "Competencia",
+    "entrada": "panel/index.html",
+    "seccion": "contenido",
+    "datos": [
+      "$CEREBRO/.claude/memory/extensiones/competencia/embudos.json",
+      "$CEREBRO/.claude/memory/extensiones/competencia/universo.json",
+      "$CEREBRO/.claude/memory/extensiones/competencia/taxonomia.json",
+      "$CEREBRO/.claude/memory/extensiones/competencia/estado-semanal.json"
+    ],
+    "acciones": [
+      {"id": "alta", "etiqueta": "Dar de alta mi nicho", "pide": "Quiero dar de alta mi nicho en la extensión de competencia."},
+      {"id": "censar", "etiqueta": "Correr el censo", "pide": "Corre el censo de mis competidores."},
+      {"id": "agregar", "etiqueta": "Agregar un competidor", "pide": "Quiero agregar competidores a mi universo: busca candidatos de mi nicho y enséñamelos para marcarlos."},
+      {"id": "curar", "etiqueta": "Curar lo que falta", "pide": "Cura las fichas de mis competidores que faltan, con evidencia."},
+      {"id": "cambios", "etiqueta": "¿Qué cambió?", "pide": "¿Qué cambió esta semana en el embudo de mis competidores?"}
+    ]
+  },
+  "tareas": [
+    {
+      "id": "estudio-semanal",
+      "cada": "0 20 * * 0",
+      "corre": "./skills/competencia/scripts/competencia.py",
+      "argumentos": ["estudio"],
+      "necesita": ["youtube_data_api_key"]
+    }
+  ],
+  "licencia": { "nivel": "gratis" }
+}

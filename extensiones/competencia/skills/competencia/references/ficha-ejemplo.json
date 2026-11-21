@@ -1,0 +1,31 @@
+{
+ "slug": "nutriplato-ejemplo",
+ "roles": {
+  "skool.com/club-nutriplato": ["comunidad_gratis", "Club NutriPlato"],
+  "nutriplato.example/consulta": ["agencia", "Consulta en línea"],
+  "nutriplato.example/plan": ["curso_pago_unico", "Plan de 8 semanas"],
+  "amzn.to": ["afiliado_o_patrocinio", null],
+  "linktr.ee": ["ignorar"]
+ },
+ "minimo_repeticion": 2,
+ "cta_hablado": [
+  {"video_id": "AAAAAAAAAA1", "desde": "11:02", "hasta": "11:20", "lugar": "cierre", "pide": "unirse al club gratis por el primer enlace"}
+ ],
+ "regalo_entrada": [
+  {"nombre": "Club NutriPlato (comunidad gratis)", "que_da": "recetario semanal y una clase en vivo al mes", "requiere": "cuenta de Skool (no se creó)",
+   "url": "https://www.skool.com/club-nutriplato/about", "dato": {"pagina": "club-nutriplato"}}
+ ],
+ "oferta_pagada": [
+  {"nombre": "Consulta nutricional en línea", "url": "https://nutriplato.example/consulta",
+   "precio": {"monto": 850, "moneda": "MXN", "recurrencia": "pago_unico", "texto": "Consulta de 50 min · $850 MXN"},
+   "dato": {"pagina": "consulta", "nivel": "precio_visto"}},
+  {"nombre": "Plan de 8 semanas", "url": "https://nutriplato.example/plan", "precio": null,
+   "dato": {"pagina": "plan", "nota": "la página dice «precio en la llamada»; no se agendó"}}
+ ],
+ "promesa": [
+  {"cita": "Come rico y baja de talla sin contar calorías", "donde": "nutriplato.example/plan (encabezado)", "dato": {"pagina": "plan"}}
+ ],
+ "vehiculo": ["comunidad_gratis", "agencia", "curso_pago_unico"],
+ "mecanismo": {"texto": "Método del plato: mitad verduras, un cuarto proteína, un cuarto cereal", "en_sus_palabras": true, "dato": {"pagina": "plan"}},
+ "no_visto": ["lo que pasa después de agendar la llamada del plan (no se agendó)"]
+}

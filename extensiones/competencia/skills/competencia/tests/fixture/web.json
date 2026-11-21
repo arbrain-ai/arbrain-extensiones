@@ -1,0 +1,20 @@
+{
+ "https://www.skool.com/club-nutriplato/about": {
+  "html": "<html><head><title>Club NutriPlato</title><meta name=\"description\" content=\"Club NutriPlato\"></head><body><h1>Club NutriPlato</h1><p>Recetario semanal y una clase en vivo al mes. Gratis.</p><p>Escríbenos: hola@nutriplato.example</p><script>var x=1</script></body></html>"
+ },
+ "https://nutriplato.example/consulta": {
+  "html": "<html><head><title>Consulta en línea</title><meta name=\"description\" content=\"Consulta en línea\"></head><body><h1>Consulta nutricional en línea</h1><p>Consulta de 50 min · $850 MXN</p><script>var x=1</script></body></html>"
+ },
+ "https://nutriplato.example/plan": {
+  "html": "<html><head><title>Plan de 8 semanas</title><meta name=\"description\" content=\"Plan de 8 semanas\"></head><body><h1>Come rico y baja de talla sin contar calorías</h1><p>Método del plato: mitad verduras, un cuarto proteína, un cuarto cereal</p><p>Precio en la llamada.</p><script>var x=1</script></body></html>"
+ },
+ "https://cocinasana.example/recetas": {
+  "html": "<html><head><title>Recetas</title><meta name=\"description\" content=\"Recetas\"></head><body><p>Recetas</p><script>var x=1</script></body></html>"
+ },
+ "https://cocinasana.example/recetario": {
+  "html": "<html><head><title>Recetario gratis</title><meta name=\"description\" content=\"Recetario gratis\"></head><body><p>Déjanos tu correo y te llega el recetario.</p><script>var x=1</script></body></html>"
+ },
+ "https://doctorfit.example/programa": {
+  "html": "<html><head><title>Fit 90</title><meta name=\"description\" content=\"Fit 90\"></head><body><p>Programa Fit 90 · USD 1,200 pago único</p><script>var x=1</script></body></html>"
+ }
+}

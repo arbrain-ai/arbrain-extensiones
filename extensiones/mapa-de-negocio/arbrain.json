@@ -1,0 +1,23 @@
+{
+  "$schema": "../../esquemas/arbrain-extension.schema.json",
+  "esquema": "arbrain.extension/v1",
+  "nombre": "Mapa de negocio",
+  "resumen": "Diagnostica el negocio de tu cliente y se lo enseña en un mapa que se mueve.",
+  "frases": ["instálame el mapa de negocio", "la extensión de radiografía", "quiero el mapa vivo"],
+  "requiere": {
+    "arbrain": ">=0.2.0",
+    "skills_base": ["canvas"],
+    "programas": ["python3"],
+    "extensiones": [],
+    "llaves": []
+  },
+  "permisos": {
+    "lee": [".claude/memory/project/clientes/", ".claude/memory/project/mi-negocio/"],
+    "escribe": [".claude/memory/project/clientes/", ".claude/memory/project/mi-negocio/"],
+    "red": [],
+    "lienzo": true,
+    "programa": false
+  },
+  "panel": null,
+  "licencia": { "nivel": "gratis" }
+}

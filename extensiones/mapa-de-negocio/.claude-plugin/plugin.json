@@ -1,0 +1,17 @@
+{
+  "name": "mapa-de-negocio",
+  "displayName": "Mapa de negocio",
+  "version": "0.1.0",
+  "description": "La Radiografía del negocio de tu cliente (preguntas en orden, cuello de botella, qué arreglar primero) y su mapa vivo en el Lienzo, para enseñárselo como una clase.",
+  "author": {
+    "name": "Arbrain"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "radiografia",
+    "diagnostico",
+    "mapa-vivo",
+    "lienzo",
+    "clientes"
+  ]
+}

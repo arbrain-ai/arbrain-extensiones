@@ -1,0 +1,147 @@
+{
+ "esquema": "arbrain.competencia.taxonomia/v1",
+ "que_es": "Cómo se agrupa a tus competidores por modelo de negocio. Estos 7 sirven para cualquier creador que vende lo que sabe; cámbialos, renómbralos o agrega los de tu industria. El panel y Levy leen este archivo, no una lista fija.",
+ "como_se_decide": "Un canal tiene un modelo si su vehículo está en `vehiculos`, si sus videos mandan a un destino con rol en `roles`, si (con `por_precio`) vende algo de alto ticket según `alto_ticket`, o si (con `rol_repetido`) ese rol aparece en al menos `min_videos` de sus videos. Un patrocinio suelto no es su modelo.",
+ "modelos": [
+  {
+   "id": "comunidad_pago",
+   "nombre": "Comunidad de pago",
+   "vehiculos": [
+    "comunidad_pago",
+    "academia_suscripcion",
+    "suscripcion"
+   ],
+   "roles": [
+    "comunidad_pago",
+    "academia_suscripcion"
+   ]
+  },
+  {
+   "id": "comunidad_gratis",
+   "nombre": "Comunidad gratis",
+   "vehiculos": [
+    "comunidad_gratis"
+   ],
+   "roles": [
+    "comunidad_gratis"
+   ]
+  },
+  {
+   "id": "alto_ticket",
+   "nombre": "Alto ticket",
+   "vehiculos": [
+    "programa_por_aplicacion",
+    "formacion_de_socio"
+   ],
+   "roles": [
+    "programa_por_aplicacion",
+    "masterclass_socio"
+   ],
+   "por_precio": true
+  },
+  {
+   "id": "curso",
+   "nombre": "Curso o producto",
+   "vehiculos": [
+    "curso_pago_unico",
+    "plataforma_de_cursos",
+    "producto_bajo_precio",
+    "libro"
+   ],
+   "roles": [
+    "curso_pago_unico"
+   ]
+  },
+  {
+   "id": "software",
+   "nombre": "Software",
+   "vehiculos": [
+    "software"
+   ],
+   "roles": []
+  },
+  {
+   "id": "agencia",
+   "nombre": "Agencia o servicio",
+   "vehiculos": [
+    "agencia",
+    "servicio_conferencias"
+   ],
+   "roles": [
+    "agencia"
+   ]
+  },
+  {
+   "id": "patrocinio",
+   "nombre": "Patrocinio o afiliado",
+   "vehiculos": [
+    "patrocinio_afiliado"
+   ],
+   "roles": [],
+   "rol_repetido": {
+    "rol": "afiliado_o_patrocinio",
+    "min_videos": 3
+   }
+  }
+ ],
+ "alto_ticket": {
+  "mensual": 500,
+  "trimestral": 300,
+  "otro": 1000,
+  "por_moneda": {
+   "MXN": {
+    "mensual": 9000,
+    "trimestral": 5400,
+    "otro": 18000
+   },
+   "COP": {
+    "mensual": 2000000,
+    "trimestral": 1200000,
+    "otro": 4000000
+   },
+   "CLP": {
+    "mensual": 475000,
+    "trimestral": 285000,
+    "otro": 950000
+   },
+   "PEN": {
+    "mensual": 1850,
+    "trimestral": 1100,
+    "otro": 3700
+   }
+  },
+  "nota": "Alto ticket por precio: 1,000 o más por pago o por año, 500 al mes o 300 al trimestre. En USD, EUR y cualquier moneda que no esté en `por_moneda`, esos números tal cual; en las de `por_moneda`, su equivalente aproximado (20 nov 2026). Ajústalos a tu mercado."
+ },
+ "fuera_de_su_embudo": [
+  "afiliado_o_patrocinio",
+  "externo",
+  "otro_video",
+  "otro",
+  "portafolio"
+ ],
+ "vehiculos": {
+  "comunidad_gratis": "comunidad gratis",
+  "comunidad_pago": "comunidad de pago",
+  "lead_magnet_correo": "regalo por correo",
+  "recurso_sin_registro": "recurso sin registro",
+  "curso_gratis_youtube": "curso gratis en YouTube",
+  "curso_pago_unico": "curso de pago",
+  "plataforma_de_cursos": "plataforma de cursos",
+  "academia_suscripcion": "academia por suscripción",
+  "suscripcion": "suscripción",
+  "formacion_en_vivo": "formación en vivo",
+  "formacion_de_socio": "formación de socio",
+  "programa_por_aplicacion": "programa por aplicación",
+  "producto_bajo_precio": "producto de bajo precio",
+  "agencia": "agencia",
+  "newsletter": "newsletter",
+  "libro": "libro",
+  "sesiones_en_vivo": "sesiones en vivo",
+  "mentorias_grupales": "mentorías grupales",
+  "servicio_conferencias": "conferencias",
+  "canal_whatsapp": "canal de WhatsApp",
+  "eventos": "eventos",
+  "patrocinio_afiliado": "patrocinios",
+  "software": "software"
+ }
+}

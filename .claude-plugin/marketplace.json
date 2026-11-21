@@ -1,0 +1,34 @@
+{
+  "name": "arbrain",
+  "description": "Extensiones de Arbrain: el catálogo curado. Cada extensión agrega a tu cerebro skills, scripts y, si trae, un panel.",
+  "owner": {
+    "name": "Arbrain"
+  },
+  "metadata": {
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "mapa-de-negocio",
+      "source": "./extensiones/mapa-de-negocio",
+      "category": "diagnostico",
+      "tags": [
+        "radiografia",
+        "mapa-vivo",
+        "clientes",
+        "acompanamiento"
+      ]
+    },
+    {
+      "name": "competencia",
+      "source": "./extensiones/competencia",
+      "category": "mercado",
+      "tags": [
+        "competencia",
+        "youtube",
+        "embudos",
+        "panel"
+      ]
+    }
+  ]
+}

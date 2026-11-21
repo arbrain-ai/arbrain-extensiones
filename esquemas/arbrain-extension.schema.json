@@ -1,0 +1,272 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "arbrain.json: lo que Arbrain necesita saber de una extensión y Claude Code no lee",
+  "type": "object",
+  "required": [
+    "esquema",
+    "nombre",
+    "resumen",
+    "requiere",
+    "permisos",
+    "panel",
+    "licencia"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "esquema": {
+      "const": "arbrain.extension/v1"
+    },
+    "nombre": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 40
+    },
+    "resumen": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 140
+    },
+    "frases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8
+    },
+    "requiere": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "arbrain",
+        "skills_base"
+      ],
+      "properties": {
+        "arbrain": {
+          "type": "string",
+          "pattern": "^(>=|\\^|~)?\\d+\\.\\d+\\.\\d+$"
+        },
+        "skills_base": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          }
+        },
+        "programas": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "extensiones": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          }
+        },
+        "llaves": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "clave",
+              "para"
+            ],
+            "properties": {
+              "clave": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+$"
+              },
+              "para": {
+                "type": "string"
+              },
+              "como_conseguirla": {
+                "type": "string"
+              },
+              "opcional": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "permisos": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lee",
+        "escribe",
+        "red",
+        "lienzo",
+        "programa"
+      ],
+      "properties": {
+        "lee": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "escribe": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "red": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Hosts a los que sale (informativo en v1; el panel solo puede hablar con ellos vía Arbrain)."
+        },
+        "lienzo": {
+          "type": "boolean"
+        },
+        "programa": {
+          "type": "boolean",
+          "description": "true si trae algo que corre solo (cron/vigilante). En v1 solo las del catálogo curado."
+        }
+      }
+    },
+    "panel": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "titulo",
+            "entrada",
+            "datos"
+          ],
+          "properties": {
+            "titulo": {
+              "type": "string",
+              "maxLength": 30
+            },
+            "entrada": {
+              "type": "string",
+              "pattern": "^panel/[A-Za-z0-9_./-]+\\.html$"
+            },
+            "icono": {
+              "type": "string",
+              "pattern": "^panel/[A-Za-z0-9_./-]+\\.svg$"
+            },
+            "seccion": {
+              "enum": [
+                "tu-negocio",
+                "contenido",
+                "clientes",
+                "sistema"
+              ]
+            },
+            "datos": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "pattern": "^(\\$DATOS|\\$CEREBRO)/[A-Za-z0-9_./-]+$"
+              },
+              "description": "Archivos JSON que el panel puede leer. $DATOS = ${CLAUDE_PLUGIN_DATA}; $CEREBRO = la carpeta del cerebro (solo lectura y solo lo listado en permisos.lee)."
+            },
+            "acciones": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "etiqueta",
+                  "pide"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9-]+$"
+                  },
+                  "etiqueta": {
+                    "type": "string"
+                  },
+                  "pide": {
+                    "type": "string",
+                    "description": "Texto que Arbrain le pasa a Levy en el chat; nunca un comando."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "tareas": {
+      "type": "array",
+      "description": "Trabajos que corren solos (el scheduler de Arbrain los da de alta al instalar y de baja al quitar). Exige permisos.programa = true.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "cada",
+          "corre"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "cada": {
+            "type": "string",
+            "description": "Expresión cron de 5 campos, hora local del dueño."
+          },
+          "corre": {
+            "type": "string",
+            "pattern": "^\\./[A-Za-z0-9_./-]+$",
+            "description": "Script relativo a la raíz de la extensión; corre con la carpeta del cerebro como carpeta de trabajo."
+          },
+          "argumentos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "necesita": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$"
+            },
+            "description": "Claves de requiere.llaves sin las que no corre (se salta y avisa, no falla)."
+          }
+        }
+      }
+    },
+    "licencia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nivel"
+      ],
+      "properties": {
+        "nivel": {
+          "enum": [
+            "gratis",
+            "membresia"
+          ]
+        },
+        "producto": {
+          "type": "string",
+          "description": "Diseño futuro: id del beneficio de la cuenta de Arbrain que la desbloquea. Ignorado en v1."
+        }
+      }
+    }
+  }
+}

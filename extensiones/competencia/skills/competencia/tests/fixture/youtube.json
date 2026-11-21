@@ -1,0 +1,306 @@
+{
+ "search": [
+  {
+   "q": "nutrióloga",
+   "items": [
+    {
+     "id": {
+      "videoId": "AAAAAAAAAA1"
+     },
+     "snippet": {
+      "channelId": "UCnutriPlatoEjemplo00000",
+      "channelTitle": "NutriPlato (ejemplo)",
+      "title": "Video 1 de NutriPlato",
+      "publishedAt": "2026-11-14T15:00:00Z"
+     }
+    },
+    {
+     "id": {
+      "videoId": "AAAAAAAAAA2"
+     },
+     "snippet": {
+      "channelId": "UCnutriPlatoEjemplo00000",
+      "channelTitle": "NutriPlato (ejemplo)",
+      "title": "Video 2 de NutriPlato",
+      "publishedAt": "2026-11-07T15:00:00Z"
+     }
+    },
+    {
+     "id": {
+      "videoId": "BBBBBBBBBB1"
+     },
+     "snippet": {
+      "channelId": "UCcocinaSanaEjemplo00000",
+      "channelTitle": "Cocina Sana (ejemplo)",
+      "title": "Receta 1",
+      "publishedAt": "2026-11-12T15:00:00Z"
+     }
+    }
+   ]
+  },
+  {
+   "q": "plan de alimentación",
+   "items": [
+    {
+     "id": {
+      "videoId": "CCCCCCCCCC2"
+     },
+     "snippet": {
+      "channelId": "UCdoctorFitEjemplo000000",
+      "channelTitle": "Doctor Fit (ejemplo)",
+      "title": "Doctor Fit 2",
+      "publishedAt": "2026-11-10T15:00:00Z"
+     }
+    },
+    {
+     "id": {
+      "videoId": "AAAAAAAAAA3"
+     },
+     "snippet": {
+      "channelId": "UCnutriPlatoEjemplo00000",
+      "channelTitle": "NutriPlato (ejemplo)",
+      "title": "Video 3 de NutriPlato",
+      "publishedAt": "2026-10-31T15:00:00Z"
+     }
+    }
+   ]
+  }
+ ],
+ "channels": {
+  "UCnutriPlatoEjemplo00000": {
+   "id": "UCnutriPlatoEjemplo00000",
+   "snippet": {
+    "title": "NutriPlato (ejemplo)",
+    "customUrl": "@nutriplato-ejemplo",
+    "country": "MX",
+    "defaultLanguage": "es",
+    "description": "Canal de NutriPlato (ejemplo) (inventado para pruebas).",
+    "thumbnails": {
+     "default": {
+      "url": "https://yt3.example/@nutriplato-ejemplo.jpg"
+     }
+    }
+   },
+   "statistics": {
+    "subscriberCount": "182000",
+    "videoCount": "120"
+   }
+  },
+  "UCcocinaSanaEjemplo00000": {
+   "id": "UCcocinaSanaEjemplo00000",
+   "snippet": {
+    "title": "Cocina Sana (ejemplo)",
+    "customUrl": "@cocinasana-ejemplo",
+    "country": "MX",
+    "defaultLanguage": "es",
+    "description": "Canal de Cocina Sana (ejemplo) (inventado para pruebas).",
+    "thumbnails": {
+     "default": {
+      "url": "https://yt3.example/@cocinasana-ejemplo.jpg"
+     }
+    }
+   },
+   "statistics": {
+    "subscriberCount": "64000",
+    "videoCount": "120"
+   }
+  },
+  "UCdoctorFitEjemplo000000": {
+   "id": "UCdoctorFitEjemplo000000",
+   "snippet": {
+    "title": "Doctor Fit (ejemplo)",
+    "customUrl": "@doctorfit-ejemplo",
+    "country": "MX",
+    "defaultLanguage": "es",
+    "description": "Canal de Doctor Fit (ejemplo) (inventado para pruebas).",
+    "thumbnails": {
+     "default": {
+      "url": "https://yt3.example/@doctorfit-ejemplo.jpg"
+     }
+    }
+   },
+   "statistics": {
+    "subscriberCount": "9100",
+    "videoCount": "120"
+   }
+  }
+ },
+ "playlistItems": {
+  "UULFnutriPlatoEjemplo00000": [
+   {
+    "contentDetails": {
+     "videoId": "AAAAAAAAAA1"
+    }
+   },
+   {
+    "contentDetails": {
+     "videoId": "AAAAAAAAAA2"
+    }
+   },
+   {
+    "contentDetails": {
+     "videoId": "AAAAAAAAAA3"
+    }
+   }
+  ],
+  "UULFcocinaSanaEjemplo00000": [
+   {
+    "contentDetails": {
+     "videoId": "BBBBBBBBBB1"
+    }
+   },
+   {
+    "contentDetails": {
+     "videoId": "BBBBBBBBBB2"
+    }
+   }
+  ],
+  "UUdoctorFitEjemplo000000": [
+   {
+    "contentDetails": {
+     "videoId": "CCCCCCCCCC1"
+    }
+   },
+   {
+    "contentDetails": {
+     "videoId": "CCCCCCCCCC2"
+    }
+   },
+   {
+    "contentDetails": {
+     "videoId": "CCCCCCCCCC3"
+    }
+   }
+  ]
+ },
+ "videos": {
+  "AAAAAAAAAA1": {
+   "id": "AAAAAAAAAA1",
+   "snippet": {
+    "channelId": "UCnutriPlatoEjemplo00000",
+    "title": "Video 1 de NutriPlato",
+    "publishedAt": "2026-11-14T15:00:00Z",
+    "description": "Únete gratis a mi club 👉 https://www.skool.com/club-nutriplato/about\nAgenda tu consulta: https://nutriplato.example/consulta\nMi plan de 8 semanas: https://nutriplato.example/plan\nLa báscula que uso: https://amzn.to/3xEjemplo\nTodo en un lugar: https://linktr.ee/nutriplato\nInstagram: https://instagram.com/nutriplato",
+    "defaultAudioLanguage": "es"
+   },
+   "contentDetails": {
+    "duration": "PT12M30S"
+   },
+   "statistics": {
+    "viewCount": "91000"
+   }
+  },
+  "AAAAAAAAAA2": {
+   "id": "AAAAAAAAAA2",
+   "snippet": {
+    "channelId": "UCnutriPlatoEjemplo00000",
+    "title": "Video 2 de NutriPlato",
+    "publishedAt": "2026-11-07T15:00:00Z",
+    "description": "Únete gratis a mi club 👉 https://www.skool.com/club-nutriplato/about\nAgenda tu consulta: https://nutriplato.example/consulta\nMi plan de 8 semanas: https://nutriplato.example/plan\nLa báscula que uso: https://amzn.to/3xEjemplo\nTodo en un lugar: https://linktr.ee/nutriplato\nInstagram: https://instagram.com/nutriplato",
+    "defaultAudioLanguage": "es"
+   },
+   "contentDetails": {
+    "duration": "PT12M30S"
+   },
+   "statistics": {
+    "viewCount": "56000"
+   }
+  },
+  "AAAAAAAAAA3": {
+   "id": "AAAAAAAAAA3",
+   "snippet": {
+    "channelId": "UCnutriPlatoEjemplo00000",
+    "title": "Video 3 de NutriPlato",
+    "publishedAt": "2026-10-31T15:00:00Z",
+    "description": "Únete gratis a mi club 👉 https://www.skool.com/club-nutriplato/about\nAgenda tu consulta: https://nutriplato.example/consulta\nMi plan de 8 semanas: https://nutriplato.example/plan\nLa báscula que uso: https://amzn.to/3xEjemplo\nTodo en un lugar: https://linktr.ee/nutriplato\nInstagram: https://instagram.com/nutriplato",
+    "defaultAudioLanguage": "es"
+   },
+   "contentDetails": {
+    "duration": "PT12M30S"
+   },
+   "statistics": {
+    "viewCount": "72000"
+   }
+  },
+  "BBBBBBBBBB1": {
+   "id": "BBBBBBBBBB1",
+   "snippet": {
+    "channelId": "UCcocinaSanaEjemplo00000",
+    "title": "Receta 1",
+    "publishedAt": "2026-11-12T15:00:00Z",
+    "description": "Recetas completas en https://cocinasana.example/recetas\nMi recetario (gratis con tu correo): https://cocinasana.example/recetario\nPatrocinado por https://ollas.example/?ref=cocinasana",
+    "defaultAudioLanguage": "es"
+   },
+   "contentDetails": {
+    "duration": "PT9M5S"
+   },
+   "statistics": {
+    "viewCount": "30000"
+   }
+  },
+  "BBBBBBBBBB2": {
+   "id": "BBBBBBBBBB2",
+   "snippet": {
+    "channelId": "UCcocinaSanaEjemplo00000",
+    "title": "Receta 2",
+    "publishedAt": "2026-11-05T15:00:00Z",
+    "description": "Recetas completas en https://cocinasana.example/recetas\nMi recetario (gratis con tu correo): https://cocinasana.example/recetario\nPatrocinado por https://ollas.example/?ref=cocinasana",
+    "defaultAudioLanguage": "es"
+   },
+   "contentDetails": {
+    "duration": "PT9M5S"
+   },
+   "statistics": {
+    "viewCount": "30001"
+   }
+  },
+  "CCCCCCCCCC1": {
+   "id": "CCCCCCCCCC1",
+   "snippet": {
+    "channelId": "UCdoctorFitEjemplo000000",
+    "title": "Doctor Fit 1",
+    "publishedAt": "2026-11-15T15:00:00Z",
+    "description": "Consulta con el doctor: https://wa.me/5215500000000\nPrograma Fit 90: https://doctorfit.example/programa",
+    "defaultAudioLanguage": "es"
+   },
+   "contentDetails": {
+    "duration": "PT45S"
+   },
+   "statistics": {
+    "viewCount": "15000"
+   }
+  },
+  "CCCCCCCCCC2": {
+   "id": "CCCCCCCCCC2",
+   "snippet": {
+    "channelId": "UCdoctorFitEjemplo000000",
+    "title": "Doctor Fit 2",
+    "publishedAt": "2026-11-10T15:00:00Z",
+    "description": "Consulta con el doctor: https://wa.me/5215500000000\nPrograma Fit 90: https://doctorfit.example/programa",
+    "defaultAudioLanguage": "es"
+   },
+   "contentDetails": {
+    "duration": "PT20M"
+   },
+   "statistics": {
+    "viewCount": "15000"
+   }
+  },
+  "CCCCCCCCCC3": {
+   "id": "CCCCCCCCCC3",
+   "snippet": {
+    "channelId": "UCdoctorFitEjemplo000000",
+    "title": "Doctor Fit 3",
+    "publishedAt": "2026-11-03T15:00:00Z",
+    "description": "Consulta con el doctor: https://wa.me/5215500000000\nPrograma Fit 90: https://doctorfit.example/programa",
+    "defaultAudioLanguage": "es"
+   },
+   "contentDetails": {
+    "duration": "PT18M"
+   },
+   "statistics": {
+    "viewCount": "15000"
+   }
+  }
+ }
+}

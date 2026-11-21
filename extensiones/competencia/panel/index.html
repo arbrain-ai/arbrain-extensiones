@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'">
+<title>Competencia</title>
+<!--
+  Panel de la extensión «Competencia» (contrato de paneles, SPEC §2, 20 nov 2026).
+  Vive en un iframe sandbox="allow-scripts" (origen opaco) sin red: todo dato entra por postMessage desde Arbrain,
+  y solo los archivos que declara arbrain.json › panel.datos. Los botones no ejecutan nada: mandan a Arbrain
+  {tipo:"accion", destino:"chat:<id>"} (Levy recibe el texto declarado) o "url:https://…" (se abre en su navegador).
+  Todo en un archivo: la CSP de las vistas de Arbrain solo deja correr scripts en línea.
+-->
+<style>
+:root {
+  --fondo: #0f1115; --tarjeta: #161920; --tinta: #eceef2; --tenue: #8d93a1; --linea: rgba(255,255,255,.07);
+  --linea-2: rgba(255,255,255,.13); --acento: #8ea2ff; --acento-2: #f2c66d; --sobre-acento: #0b0d12; --peligro: #ff8f8f;
+  --serif: ui-serif, Georgia, "Times New Roman", serif;
+  color-scheme: dark;
+}
+:root[data-modo="claro"] {
+  --fondo: #f7f7f5; --tarjeta: #ffffff; --tinta: #1b1d22; --tenue: #6a6f7b; --linea: rgba(0,0,0,.07);
+  --linea-2: rgba(0,0,0,.13); --acento: #4359d6; --acento-2: #a2700b; --sobre-acento: #ffffff; color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--fondo); color: var(--tinta); font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif; }
+body { padding: 22px 26px 40px; }
+button { font: inherit; color: inherit; }
+.cabeza { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-bottom: 18px; }
+.cabeza h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.cabeza p { margin: 3px 0 0; color: var(--tenue); font-size: 13px; }
+.cabeza p b { color: var(--tinta); font-weight: 600; }
+.acciones { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--linea-2);
+  background: color-mix(in srgb, var(--tinta) 5%, transparent); font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.btn:hover { background: color-mix(in srgb, var(--tinta) 10%, transparent); }
+.btn.primario { background: var(--acento); border-color: transparent; color: var(--sobre-acento); }
+.btn.primario:hover { filter: brightness(1.07); }
+.btn small { font-weight: 400; opacity: .75; }
+.bloque { background: var(--tarjeta); border: 1px solid var(--linea); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; }
+.bloque > header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.bloque h2 { margin: 0; font-size: 14px; font-weight: 650; display: flex; align-items: baseline; gap: 8px; }
+.cuenta { font-size: 12px; font-weight: 600; color: var(--tenue); }
+.segmento { display: inline-flex; gap: 2px; padding: 2px; border-radius: 999px; border: 1px solid var(--linea-2); }
+.segmento button { height: 26px; padding: 0 11px; border: 0; border-radius: 999px; background: none; color: var(--tenue); font-size: 12px; font-weight: 600; cursor: pointer; }
+.segmento button[data-activo] { background: color-mix(in srgb, var(--tinta) 12%, transparent); color: var(--tinta); }
+.barras { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.barras button { display: grid; grid-template-columns: 170px minmax(0, 1fr) 84px; align-items: center; gap: 12px; width: 100%; padding: 5px 8px;
+  border: 0; border-radius: 8px; background: none; cursor: pointer; text-align: left; }
+.barras button:hover { background: color-mix(in srgb, var(--tinta) 5%, transparent); }
+.barras button[data-apagado] { opacity: .42; }
+.barras .nombre { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pista { height: 14px; border-radius: 4px; background: color-mix(in srgb, var(--tinta) 6%, transparent); overflow: hidden; }
+.pista i { display: block; height: 100%; border-radius: 4px; background: var(--acento); transition: width .26s ease; }
+.barras button[data-activo] .pista i { background: var(--acento-2); }
+.cifra { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cifra small { font-size: 11.5px; font-weight: 400; color: var(--tenue); }
+.lista { list-style: none; margin: 0; padding: 0; }
+.lista li + li { border-top: 1px solid var(--linea); }
+.fila { display: grid; grid-template-columns: 40px minmax(150px, 1.1fr) minmax(0, 1.5fr) 140px minmax(0, 1.3fr); align-items: center; gap: 12px;
+  width: 100%; padding: 8px 6px; border: 0; background: none; text-align: left; cursor: pointer; border-radius: 8px; }
+.fila:hover { background: color-mix(in srgb, var(--tinta) 4%, transparent); }
+.foto { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 15px; color: #0b0d12; }
+.foto { overflow: hidden; } .foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.quien { display: flex; flex-direction: column; min-width: 0; }
+.quien strong { font-size: 13.5px; font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.quien small, .sin, em { font-size: 11.5px; color: var(--tenue); font-style: normal; }
+.oferta { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.precio { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--acento-2); }
+.etiquetas { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
+.etiquetas span { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; font-size: 11px; font-weight: 550; white-space: nowrap;
+  color: color-mix(in srgb, var(--acento) 80%, var(--tinta)); background: color-mix(in srgb, var(--acento) 13%, transparent); }
+.etiquetas span[data-activo] { color: var(--acento-2); background: color-mix(in srgb, var(--acento-2) 15%, transparent); }
+.vacio { padding: 18px 6px; color: var(--tenue); font-size: 13px; }
+.vacio .btn { margin-top: 10px; }
+.volver { margin-bottom: 12px; }
+.ficha h2 { font-size: 17px; }
+.ficha header small { color: var(--tenue); font-size: 12px; }
+.ficha header small b { color: var(--acento-2); }
+.filas { margin: 0; }
+.filas > div { display: grid; grid-template-columns: 140px minmax(0, 1fr); align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--linea); }
+.filas > div:first-child { border-top: 0; }
+.filas dt { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--tenue); }
+.filas dd { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0; min-width: 0; font-size: 13.5px; }
+.filas .n { flex: 1 1 160px; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.destino { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; min-height: 28px; padding: 3px 10px; border-radius: 10px; font-size: 12.5px;
+  font-weight: 600; border: 1px solid var(--linea-2); background: color-mix(in srgb, var(--tinta) 3%, transparent); cursor: pointer; }
+.destino small { font-size: 11px; font-weight: 400; color: var(--tenue); }
+q.promesa { font-family: var(--serif); font-size: 14.5px; font-style: italic; }
+q.promesa::before { content: '«'; } q.promesa::after { content: '»'; }
+.aviso { font-size: 12px; color: var(--peligro); margin: 0 0 10px; }
+.pie { margin-top: 8px; color: var(--tenue); font-size: 11.5px; }
+@media (max-width: 860px) {
+  body { padding: 16px; }
+  .fila { grid-template-columns: 36px minmax(0, 1fr) auto; grid-template-areas: 'foto quien precio' 'foto oferta oferta' 'foto etiq etiq'; row-gap: 3px; align-items: start; }
+  .foto { grid-area: foto; width: 36px; height: 36px; } .quien { grid-area: quien; } .oferta { grid-area: oferta; } .precio { grid-area: precio; } .etiquetas { grid-area: etiq; }
+  .barras button { grid-template-columns: 118px minmax(0, 1fr) 76px; }
+  .filas > div { grid-template-columns: 1fr; gap: 4px; }
+}
+</style>
+</head>
+<body>
+<main id="raiz" aria-live="polite"><p class="vacio">Leyendo tus competidores…</p></main>
+
+<script id="logica">
+/* Lógica pura del panel (sin DOM): la misma regla que la pestaña Competidores de Arbrain (embudo.ts), pero con la
+   taxonomía del dueño en lugar de una lista fija. La prueba de paridad corre este bloque y embudo.ts sobre las mismas
+   fichas. Expone globalThis.Competencia. */
+(function (g) {
+  var RECURRENCIA = { mensual: '/mes', anual: '/año', trimestral: '/trimestre', pago_unico: ' pago único' }
+  var MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+  var FUERA_DEFECTO = ['afiliado_o_patrocinio', 'externo', 'otro_video', 'otro', 'portafolio']
+  function limpio(t) { return typeof t === 'string' ? t.replace(/\s+/g, ' ').trim() : '' }
+  function urlSegura(u) {
+    if (typeof u !== 'string') return null
+    try { var x = new URL(u); return x.protocol === 'https:' || x.protocol === 'http:' ? x.toString() : null } catch (e) { return null }
+  }
+  function dominio(u) { try { return new URL(u || '').hostname.replace(/^www\./, '') } catch (e) { return '' } }
+  function precioCorto(p) {
+    if (!p || typeof p.monto !== 'number' || !isFinite(p.monto)) return null
+    var monto = p.monto.toLocaleString('en-US', { maximumFractionDigits: 2 })
+    return monto + (p.moneda ? ' ' + p.moneda : '') + (p.recurrencia ? (RECURRENCIA[p.recurrencia] || '') : '')
+  }
+  function etiquetaVehiculo(v, tax) { var m = (tax && tax.vehiculos) || {}; return m[v] || String(v).replace(/_/g, ' ') }
+  function diaCorto(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '')
+    return m ? (Number(m[3]) + ' ' + (MESES[Number(m[2]) - 1] || '')).trim() : ''
+  }
+  function resumirEmbudo(f, corte, estado, tax) {
+    var fuera = (tax && tax.fuera_de_su_embudo) || FUERA_DEFECTO
+    var ofertas = (f.oferta_pagada || []).filter(function (o) { return limpio(o.nombre) })
+    var conPrecio = function (o) { return precioCorto(o.precio || null) != null ? 1 : 0 }
+    var vende = ofertas.slice().sort(function (a, b) { return conPrecio(b) - conPrecio(a) }).slice(0, 2)
+      .map(function (o) { return { nombre: limpio(o.nombre), precio: precioCorto(o.precio || null), url: urlSegura(o.url) } })
+    var rs = f.regalo_entrada || []
+    var r = rs.find(function (x) { return limpio(x.nombre) && urlSegura(x.url) }) || rs.find(function (x) { return limpio(x.nombre) })
+    var vistos = {}, destinos = []
+    var ds = (f.destinos_video || []).slice().sort(function (a, b) { return (b.en_videos || 0) - (a.en_videos || 0) })
+    for (var i = 0; i < ds.length && destinos.length < 3; i++) {
+      var d = ds[i], url = urlSegura(d.url), nombre = limpio(d.nombre) || dominio(url)
+      if (!url || !nombre || fuera.indexOf(d.rol || '') >= 0 || /no suyo/i.test(nombre) || vistos[nombre]) continue
+      vistos[nombre] = 1
+      destinos.push({ nombre: nombre, url: url, en: d.en_videos || 0, de: d.de_videos || 0 })
+    }
+    var cambio = estado && estado.canales && estado.canales[f.slug] ? estado.canales[f.slug].ultimo_cambio : null
+    var promesa = (f.promesa || []).find(function (p) { return limpio(p.cita) })
+    var veh = [], vv = {}
+    ;(f.vehiculo || []).forEach(function (v) { if (typeof v === 'string' && v && !vv[v]) { vv[v] = 1; veh.push(etiquetaVehiculo(v, tax)) } })
+    return {
+      slug: f.slug, channel_id: f.channel_id, vende: vende,
+      regalo: r ? { nombre: limpio(r.nombre), url: urlSegura(r.url) } : null,
+      destinos: destinos, promesa: promesa ? limpio(promesa.cita) : null, vehiculo: veh, fecha: corte,
+      cambio: typeof cambio === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(cambio) ? cambio : null,
+      completa: !!(f.cobertura && f.cobertura.estado === 'completa')
+    }
+  }
+  function precioAlto(p, umbral) {
+    umbral = umbral || {}
+    if (!p || typeof p.monto !== 'number') return false
+    var u = Object.assign({}, umbral, ((umbral.por_moneda || {})[String(p.moneda || '').toUpperCase()]) || {})
+    var tope = p.recurrencia === 'mensual' ? (u.mensual != null ? u.mensual : 500) : p.recurrencia === 'trimestral' ? (u.trimestral != null ? u.trimestral : 300) : (u.otro != null ? u.otro : 1000)
+    return p.monto >= tope
+  }
+  function modelosDe(f, tax) {
+    var tiene = {}, veh = f.vehiculo || [], ds = f.destinos_video || []
+    var caro = (f.oferta_pagada || []).some(function (o) { return precioAlto(o.precio || null, tax.alto_ticket) })
+    tax.modelos.forEach(function (m) {
+      var mv = m.vehiculos || [], mr = m.roles || []
+      if (veh.some(function (v) { return mv.indexOf(v) >= 0 }) || ds.some(function (d) { return mr.indexOf(d.rol) >= 0 })) tiene[m.id] = 1
+      var rr = m.rol_repetido
+      if (rr && ds.some(function (d) { return d.rol === rr.rol && (d.en_videos || 0) >= (rr.min_videos || 3) })) tiene[m.id] = 1
+      if (m.por_precio && caro) tiene[m.id] = 1
+    })
+    return tax.modelos.map(function (m) { return m.id }).filter(function (id) { return tiene[id] })
+  }
+  function competidorDe(f, corte, tax) {
+    var e = resumirEmbudo(f, corte, null, tax)
+    return { channel_id: f.channel_id, slug: f.slug, nombre: limpio(f.nombre) || f.slug, idioma: f.idioma || '',
+      oferta: e.vende[0] ? e.vende[0].nombre : null, precio: e.vende[0] ? e.vende[0].precio : null, url: e.vende[0] ? e.vende[0].url : null,
+      modelos: modelosDe(f, tax), completa: e.completa }
+  }
+  function conteoModelos(cs, tax) {
+    return tax.modelos.map(function (m) { return { id: m.id, nombre: m.nombre, canales: cs.filter(function (c) { return c.modelos.indexOf(m.id) >= 0 }).length } })
+      .filter(function (x) { return x.canales > 0 }).sort(function (a, b) { return b.canales - a.canales })
+  }
+  g.Competencia = { limpio: limpio, urlSegura: urlSegura, precioCorto: precioCorto, etiquetaVehiculo: etiquetaVehiculo, diaCorto: diaCorto,
+    resumirEmbudo: resumirEmbudo, modelosDe: modelosDe, competidorDe: competidorDe, conteoModelos: conteoModelos, precioAlto: precioAlto }
+})(globalThis)
+</script>
+
+<script id="app">
+(function () {
+  var C = globalThis.Competencia
+  var BASE = 'ext:$CEREBRO/.claude/memory/extensiones/competencia/'
+  var FUENTES = { embudos: BASE + 'embudos.json', universo: BASE + 'universo.json', taxonomia: BASE + 'taxonomia.json', estado: BASE + 'estado-semanal.json' }
+  var IDIOMAS = { es: 'En español', en: 'En inglés', pt: 'En portugués', fr: 'En francés', it: 'En italiano', de: 'En alemán' }
+  var S = { datos: {}, estados: {}, grupo: 'todos', modelo: null, canal: null, listo: false }
+  var raiz = document.getElementById('raiz')
+
+  function enviar(m) { try { parent.postMessage(m, '*') } catch (e) {} }
+  function accion(id) { enviar({ tipo: 'accion', destino: 'chat:' + id }) }
+  function abrir(url) { var u = C.urlSegura(url); if (u) enviar({ tipo: 'accion', destino: 'url:' + u }) }
+
+  // DOM sin innerHTML: todo texto de los datos entra como texto.
+  function h(tag, attrs) {
+    var el = document.createElement(tag)
+    for (var k in attrs || {}) {
+      var v = attrs[k]
+      if (v == null || v === false) continue
+      if (k === 'on') { for (var ev in v) el.addEventListener(ev, v[ev]) } else if (k === 'style') el.setAttribute('style', v)
+      else el.setAttribute(k, v === true ? '' : v)
+    }
+    for (var i = 2; i < arguments.length; i++) {
+      var c = arguments[i]
+      if (c == null || c === false) continue
+      if (Array.isArray(c)) c.forEach(function (x) { if (x != null && x !== false) el.append(x) })
+      else el.append(c)
+    }
+    return el
+  }
+  function compacto(n) {
+    if (typeof n !== 'number') return 's/d'
+    if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace('.0', '') + ' M'
+    if (n >= 1e3) return (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace('.0', '') + ' K'
+    return String(n)
+  }
+  function tono(t) { var x = 0; for (var i = 0; i < t.length; i++) x = (x * 31 + t.charCodeAt(i)) % 360; return 'hsl(' + x + ' 55% 70%)' }
+  // La foto del canal llega DENTRO del universo como data URI (la CSP de la vista solo deja img-src data:); sin ella, iniciales.
+  var FOTO = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/
+  function foto(nombre, u) {
+    var m = u && typeof u.miniatura === 'string' && u.miniatura.length < 24000 && FOTO.test(u.miniatura) ? u.miniatura : null
+    return h('span', { class: 'foto', style: 'background:' + tono(nombre || '?'), 'aria-hidden': 'true' },
+      m ? h('img', { src: m, alt: '', width: 40, height: 40, loading: 'lazy' }) : (nombre || '?').slice(0, 1).toUpperCase())
+  }
+  var sinDato = function () { return h('span', { class: 'sin' }, 'sin dato') }
+
+  function taxonomia() { return S.datos.taxonomia || { modelos: [], vehiculos: {} } }
+  function universo() { return S.datos.universo || null }
+
+  function filas() {
+    var u = universo(), emb = S.datos.embudos, tax = taxonomia()
+    var porId = {}
+    ;(emb && emb.fichas || []).forEach(function (f) { porId[f.channel_id] = f })
+    var canales = (u && u.canales || []).filter(function (c) { return (c.capas || [c.capa]).some(function (x) { return x === 'competencia' || x === 'referente' }) })
+    var out = canales.map(function (c) {
+      var f = porId[c.channel_id]
+      var comp = f ? C.competidorDe(f, emb.corte, tax) : { channel_id: c.channel_id, slug: c.slug, nombre: c.nombre, idioma: c.idioma || '', oferta: null, precio: null, url: null, modelos: [], completa: false }
+      comp.idioma = comp.idioma || c.idioma || ''
+      return { c: comp, u: c, ficha: f || null }
+    })
+    // Fichas sin canal en el universo (archivo traído de otro lado): igual se muestran.
+    ;(emb && emb.fichas || []).forEach(function (f) {
+      if (!canales.some(function (c) { return c.channel_id === f.channel_id })) out.push({ c: C.competidorDe(f, emb.corte, tax), u: null, ficha: f })
+    })
+    return out
+  }
+
+  function cabeza(todas) {
+    var u = universo(), emb = S.datos.embudos
+    var curadas = todas.filter(function (x) { return x.ficha }).length
+    var sub = u ? [h('b', null, u.dueno && u.dueno.nicho || 'tu nicho'), ' · ', String(todas.length), ' canales', curadas ? ' · ' + curadas + ' con ficha' : '',
+      emb && emb.corte ? ' · dato del ' + C.diaCorto(emb.corte) : ''] : ['Todavía no hay alta de tu nicho.']
+    return h('header', { class: 'cabeza' },
+      h('div', null, h('h1', null, 'Competencia'), h('p', null, sub)),
+      u ? h('div', { class: 'acciones' },
+        h('button', { class: 'btn primario', 'data-accion': 'censar', on: { click: function () { accion('censar') } } }, 'Correr el censo'),
+        h('button', { class: 'btn', 'data-accion': 'agregar', on: { click: function () { accion('agregar') } } }, 'Agregar un competidor'),
+        h('button', { class: 'btn', 'data-accion': 'curar', on: { click: function () { accion('curar') } } }, 'Curar lo que falta'),
+        h('button', { class: 'btn', 'data-accion': 'cambios', on: { click: function () { accion('cambios') } } }, '¿Qué cambió?')) : null)
+  }
+
+  function avisos() {
+    var negadas = Object.keys(S.estados).filter(function (k) { return S.estados[k] === 'negado' || S.estados[k] === 'error' })
+    return negadas.length ? h('p', { class: 'aviso' }, 'Arbrain no dejó leer: ' + negadas.join(', ') + '.') : null
+  }
+
+  function vistaLista() {
+    var tax = taxonomia(), todas = filas()
+    var idiomas = []
+    todas.forEach(function (x) { if (x.c.idioma && idiomas.indexOf(x.c.idioma) < 0) idiomas.push(x.c.idioma) })
+    var delGrupo = todas.filter(function (x) { return S.grupo === 'todos' || x.c.idioma === S.grupo })
+    var conFicha = delGrupo.filter(function (x) { return x.ficha })
+    var barras = C.conteoModelos(conFicha.map(function (x) { return x.c }), tax)
+    var max = barras[0] ? barras[0].canales : 1
+    var lista = delGrupo.filter(function (x) { return !S.modelo || x.c.modelos.indexOf(S.modelo) >= 0 })
+      .sort(function (a, b) { return ((b.u && b.u.suscriptores) || 0) - ((a.u && a.u.suscriptores) || 0) })
+    var nombreModelo = function (id) { var m = tax.modelos.find(function (x) { return x.id === id }); return m ? m.nombre : id }
+
+    var bloqueModelos = h('section', { class: 'bloque', 'data-prueba': 'modelos' },
+      h('header', null,
+        h('h2', null, 'Qué modelo predomina', h('span', { class: 'cuenta' }, conFicha.length + ' con ficha')),
+        idiomas.length > 1 ? h('div', { class: 'segmento', role: 'tablist' },
+          [['todos', 'Todos']].concat(idiomas.map(function (i) { return [i, IDIOMAS[i] || i] })).map(function (g) {
+            return h('button', { role: 'tab', 'data-activo': S.grupo === g[0], on: { click: function () { S.grupo = g[0]; S.modelo = null; pintar() } } }, g[1])
+          })) : null),
+      barras.length ? h('ul', { class: 'barras' }, barras.map(function (b) {
+        return h('li', null, h('button', {
+          'data-activo': S.modelo === b.id, 'data-apagado': !!(S.modelo && S.modelo !== b.id),
+          title: S.modelo === b.id ? 'Quitar el filtro' : 'Ver solo ' + b.nombre.toLowerCase(),
+          on: { click: function () { S.modelo = S.modelo === b.id ? null : b.id; pintar() } }
+        }, h('span', { class: 'nombre' }, b.nombre), h('span', { class: 'pista' }, h('i', { style: 'width:' + (b.canales / max * 100) + '%' })),
+          h('b', { class: 'cifra' }, String(b.canales), h('small', null, ' · ' + Math.round(b.canales / Math.max(conFicha.length, 1) * 100) + ' %'))))
+      })) : h('p', { class: 'vacio' }, todas.length ? 'Cuando Levy cure las primeras fichas, aquí verás qué modelo de negocio predomina en tu nicho.' : 'Sin canales todavía.',
+        todas.length ? h('br') : null, todas.length ? h('button', { class: 'btn', on: { click: function () { accion('curar') } } }, 'Curar las fichas') : null))
+
+    var bloqueLista = h('section', { class: 'bloque', 'data-prueba': 'lista' },
+      h('header', null, h('h2', null, S.modelo ? nombreModelo(S.modelo) : 'Quién vende qué', h('span', { class: 'cuenta' }, String(lista.length))),
+        S.modelo ? h('button', { class: 'btn', on: { click: function () { S.modelo = null; pintar() } } }, 'quitar filtro') : null),
+      lista.length ? h('ul', { class: 'lista' }, lista.map(function (x) {
+        var c = x.c
+        return h('li', null, h('button', { class: 'fila', title: 'Ver el embudo de ' + c.nombre, 'data-slug': c.slug, on: { click: function () { S.canal = c.slug; pintar(); scrollTo(0, 0) } } },
+          foto(c.nombre, x.u),
+          h('span', { class: 'quien' }, h('strong', null, c.nombre), h('small', null, compacto(x.u && x.u.suscriptores) + ' subs' + (c.idioma ? ' · ' + c.idioma : '') + (x.u && x.u.capa === 'referente' ? ' · referente' : ''))),
+          h('span', { class: 'oferta', title: c.oferta || '' }, c.oferta || h('em', null, x.ficha ? 'sin oferta vista' : 'sin ficha todavía')),
+          h('b', { class: 'precio' }, c.precio || h('em', null, '—')),
+          h('span', { class: 'etiquetas' }, c.modelos.slice(0, 4).map(function (m) { return h('span', { 'data-activo': m === S.modelo }, nombreModelo(m)) }))))
+      })) : h('p', { class: 'vacio' }, todas.length ? 'Nadie con ese modelo en este grupo.' : 'Aún no marcas competidores.',
+        todas.length ? null : h('br'), todas.length ? null : h('button', { class: 'btn primario', on: { click: function () { accion('agregar') } } }, 'Buscar competidores')))
+
+    return [cabeza(todas), avisos(), bloqueModelos, bloqueLista,
+      h('p', { class: 'pie' }, 'Cada dato tiene fuente y fecha en tu cerebro (.claude/memory/extensiones/competencia/). Lo que falta dice «sin dato»: vacío no es cero.')]
+  }
+
+  function vistaCanal(slug) {
+    var tax = taxonomia(), todas = filas()
+    var x = todas.find(function (y) { return y.c.slug === slug })
+    if (!x) { S.canal = null; return vistaLista() }
+    var emb = S.datos.embudos
+    var e = x.ficha ? C.resumirEmbudo(x.ficha, emb.corte, S.datos.estado, tax) : null
+    var v = e && e.vende[0]
+    var boton = function (url, texto) { return C.urlSegura(url) ? h('button', { class: 'btn', title: url, on: { click: function () { abrir(url) } } }, texto + ' ↗') : null }
+    var canalUrl = x.u ? x.u.url : (x.ficha ? 'https://www.youtube.com/channel/' + x.ficha.channel_id : null)
+    return [cabeza(todas), h('button', { class: 'btn volver', on: { click: function () { S.canal = null; pintar() } } }, '← Todos'),
+      h('section', { class: 'bloque ficha', 'data-prueba': 'su-embudo' },
+        h('header', null, h('h2', null, x.c.nombre, h('span', { class: 'cuenta' }, compacto(x.u && x.u.suscriptores) + ' subs')),
+          h('small', null, e && e.cambio ? h('b', null, 'cambió el ' + C.diaCorto(e.cambio)) : null, e && e.cambio ? ' · ' : '', e ? 'dato del ' + C.diaCorto(e.fecha) : 'sin ficha todavía', ' ', boton(canalUrl, 'Canal'))),
+        e ? h('dl', { class: 'filas' },
+          h('div', null, h('dt', null, 'Vende'), h('dd', null, v ? [h('span', { class: 'n', title: v.nombre }, v.nombre), h('b', { class: 'precio' }, v.precio || 'precio sin dato'), boton(v.url, 'Ver oferta')] : sinDato())),
+          h('div', null, h('dt', null, 'Regalo'), h('dd', null, e.regalo ? [h('span', { class: 'n', title: e.regalo.nombre }, e.regalo.nombre), boton(e.regalo.url, 'Abrir')] : sinDato())),
+          h('div', null, h('dt', null, 'Sus videos mandan a'), h('dd', null, e.destinos.length ? e.destinos.map(function (d) {
+            return h('button', { class: 'destino', title: d.url, on: { click: function () { abrir(d.url) } } }, h('span', null, d.nombre), d.de > 0 ? h('small', null, 'en ' + d.en + ' de ' + d.de + ' videos') : null, ' ↗')
+          }) : sinDato())),
+          h('div', null, h('dt', null, 'Promete'), h('dd', null, e.promesa ? h('q', { class: 'promesa' }, e.promesa) : sinDato())),
+          h('div', null, h('dt', null, 'Vehículo'), h('dd', { class: 'etiquetas' }, e.vehiculo.length ? e.vehiculo.map(function (t) { return h('span', null, t) }) : sinDato())),
+          h('div', null, h('dt', null, 'Modelo'), h('dd', { class: 'etiquetas' }, x.c.modelos.length ? x.c.modelos.map(function (m) { var t = tax.modelos.find(function (z) { return z.id === m }); return h('span', { 'data-activo': true }, t ? t.nombre : m) }) : sinDato()))
+        ) : h('p', { class: 'vacio' }, 'Levy todavía no cura su ficha. Su censo ya está en tu cerebro.', h('br'),
+          h('button', { class: 'btn primario', on: { click: function () { accion('curar') } } }, 'Curar su ficha')))]
+  }
+
+  function vistaSinAlta() {
+    return [cabeza([]), avisos(), h('section', { class: 'bloque' }, h('p', { class: 'vacio' },
+      'Dile a Levy tu nicho en tus palabras y a quién ya ves como competencia. Él arma tu universo, corre el censo con tu llave de YouTube y cura las fichas con evidencia.',
+      h('br'), h('button', { class: 'btn primario', 'data-accion': 'alta', on: { click: function () { accion('alta') } } }, 'Dar de alta mi nicho')))]
+  }
+
+  function pintar() {
+    var cuerpo = !universo() && !S.datos.embudos ? vistaSinAlta() : S.canal ? vistaCanal(S.canal) : vistaLista()
+    raiz.replaceChildren.apply(raiz, cuerpo.filter(Boolean))
+    if (!S.listo && Object.keys(S.estados).length === Object.keys(FUENTES).length) {
+      S.listo = true
+      enviar({ tipo: 'listo' })
+      var clic = /(?:^|[#&])clic=([a-z0-9-]+)/.exec(location.hash)  // ayuda de pruebas: simula que el dueño tocó ese botón
+      if (clic) { var b = document.querySelector('[data-accion="' + clic[1] + '"]'); if (b) b.click() }
+    }
+  }
+
+  function tema(m) {
+    if (m.modo === 'claro' || m.modo === 'oscuro') document.documentElement.setAttribute('data-modo', m.modo)
+    var c = m.colores || {}
+    ;['acento', 'acento-2', 'sobre-acento', 'fondo', 'tarjeta', 'tinta', 'tenue'].forEach(function (k) {
+      var v = c[k] || c[k.replace('-2', '2')]
+      if (typeof v === 'string' && /^#[0-9a-f]{3,8}$/i.test(v)) document.documentElement.style.setProperty('--' + k, v)
+    })
+  }
+
+  addEventListener('message', function (ev) {
+    var m = ev.data
+    if (!m || typeof m !== 'object') return
+    if (m.tipo === 'tema' || m.tipo === 'bienvenida') { tema(m); return }
+    if (m.tipo !== 'datos') return
+    var k = Object.keys(FUENTES).find(function (x) { return FUENTES[x] === m.fuente })
+    if (!k) return
+    S.estados[k] = m.estado
+    S.datos[k] = m.estado === 'ok' && m.valor && typeof m.valor === 'object' ? m.valor : null
+    pintar()
+  })
+
+  var canal = /(?:^|[#&])canal=([a-z0-9-]+)/.exec(location.hash)
+  if (canal) S.canal = canal[1]
+  enviar({ tipo: 'hola', version: 1, v: 1 })
+  Object.keys(FUENTES).forEach(function (k) { enviar({ tipo: 'pedir', fuente: FUENTES[k] }) })
+})()
+</script>
+</body>
+</html>

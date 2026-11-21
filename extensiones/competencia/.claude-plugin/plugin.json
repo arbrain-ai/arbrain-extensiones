@@ -1,0 +1,17 @@
+{
+  "name": "competencia",
+  "displayName": "Competencia",
+  "version": "0.1.4",
+  "description": "Tu censo propio de los canales de YouTube de tu nicho: a quién le hablan, qué regalan, qué venden y a qué precio, con evidencia fechada, y un panel que dice qué modelo de negocio predomina.",
+  "author": {
+    "name": "Arbrain"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "competencia",
+    "youtube",
+    "embudos",
+    "mercado",
+    "panel"
+  ]
+}
